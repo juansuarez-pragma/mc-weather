@@ -90,8 +90,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design decisions.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/weather-api-service.git
-cd weather-api-service
+git clone git@github.com:juansuarez-pragma/mc-weather.git
+cd mc-weather
 ```
 
 ### 2. Build the Project
