@@ -1,0 +1,365 @@
+{
+  "info": {
+    "name": "Weather API Service",
+    "description": "Collection of API requests for Weather API Service - Backend for iOS Weather App",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "Weather Forecast",
+      "item": [
+        {
+          "name": "Get Weather - New York",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/forecast?latitude=40.7128&longitude=-74.0060",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "forecast"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "40.7128",
+                  "description": "New York latitude"
+                },
+                {
+                  "key": "longitude",
+                  "value": "-74.0060",
+                  "description": "New York longitude"
+                }
+              ]
+            },
+            "description": "Get current weather forecast for New York coordinates"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Weather - London",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/forecast?latitude=51.5074&longitude=-0.1278&timezone=Europe/London",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "forecast"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "51.5074",
+                  "description": "London latitude"
+                },
+                {
+                  "key": "longitude",
+                  "value": "-0.1278",
+                  "description": "London longitude"
+                },
+                {
+                  "key": "timezone",
+                  "value": "Europe/London",
+                  "description": "Timezone override"
+                }
+              ]
+            },
+            "description": "Get current weather forecast for London with specific timezone"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Weather - Tokyo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/forecast?latitude=35.6762&longitude=139.6503",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "forecast"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "35.6762"
+                },
+                {
+                  "key": "longitude",
+                  "value": "139.6503"
+                }
+              ]
+            },
+            "description": "Get current weather forecast for Tokyo"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Latitude (should fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/forecast?latitude=91.0&longitude=-74.0060",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "forecast"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "91.0",
+                  "description": "Invalid - exceeds max 90"
+                },
+                {
+                  "key": "longitude",
+                  "value": "-74.0060"
+                }
+              ]
+            },
+            "description": "Test validation - should return 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Longitude (should fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/forecast?latitude=40.7128&longitude=181.0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "forecast"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "40.7128"
+                },
+                {
+                  "key": "longitude",
+                  "value": "181.0",
+                  "description": "Invalid - exceeds max 180"
+                }
+              ]
+            },
+            "description": "Test validation - should return 400 Bad Request"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for retrieving weather forecasts by coordinates"
+    },
+    {
+      "name": "City Search",
+      "item": [
+        {
+          "name": "Search - New York",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/search?name=New York&count=10&language=en",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "New York"
+                },
+                {
+                  "key": "count",
+                  "value": "10"
+                },
+                {
+                  "key": "language",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Search for cities named 'New York'"
+          },
+          "response": []
+        },
+        {
+          "name": "Search - London",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/search?name=London&count=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "London"
+                },
+                {
+                  "key": "count",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Search for cities named 'London' - limit 5 results"
+          },
+          "response": []
+        },
+        {
+          "name": "Search - Paris (Spanish)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/search?name=Paris&language=es",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Paris"
+                },
+                {
+                  "key": "language",
+                  "value": "es",
+                  "description": "Results in Spanish"
+                }
+              ]
+            },
+            "description": "Search for cities named 'Paris' with Spanish language"
+          },
+          "response": []
+        },
+        {
+          "name": "Short Name (should fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/search?name=N",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "N",
+                  "description": "Too short - minimum 2 characters"
+                }
+              ]
+            },
+            "description": "Test validation - should return 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "Excessive Count (should fail)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/weather/search?name=London&count=25",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "weather", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "London"
+                },
+                {
+                  "key": "count",
+                  "value": "25",
+                  "description": "Exceeds maximum of 20"
+                }
+              ]
+            },
+            "description": "Test validation - should return 400 Bad Request"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for searching cities by name"
+    },
+    {
+      "name": "Health & Monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/health",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Check application health status including external API status"
+          },
+          "response": []
+        },
+        {
+          "name": "Prometheus Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/prometheus",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "prometheus"]
+            },
+            "description": "Get Prometheus-formatted metrics"
+          },
+          "response": []
+        },
+        {
+          "name": "Application Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/info",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "info"]
+            },
+            "description": "Get application information"
+          },
+          "response": []
+        }
+      ],
+      "description": "Health checks and monitoring endpoints"
+    },
+    {
+      "name": "API Documentation",
+      "item": [
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/swagger-ui.html",
+              "host": ["{{base_url}}"],
+              "path": ["swagger-ui.html"]
+            },
+            "description": "Open interactive API documentation (open in browser)"
+          },
+          "response": []
+        },
+        {
+          "name": "OpenAPI JSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api-docs",
+              "host": ["{{base_url}}"],
+              "path": ["api-docs"]
+            },
+            "description": "Get OpenAPI 3.0 specification in JSON format"
+          },
+          "response": []
+        }
+      ],
+      "description": "API documentation endpoints"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+server:
+  error:
+    include-stacktrace: never
+    include-exception: false
+    include-message: on_param
+
+spring:
+  cache:
+    caffeine:
+      spec: maximumSize=5000,expireAfterWrite=10m
+
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Logging for Production
+logging:
+  level:
+    root: WARN
+    com.weather.api: INFO
+    org.springframework.web: WARN
+    org.springframework.cache: INFO
+    io.github.resilience4j: INFO
+    feign: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{traceId}] %logger{36} - %msg%n"
+
+# CORS for Production - Specify allowed origins
+cors:
+  allowed-origins: "https://your-ios-app-domain.com"
+  allowed-methods: GET,OPTIONS
+  allowed-headers: Content-Type,Authorization
+  max-age: 7200
+
+# Rate Limiting - More restrictive in production
+rate-limit:
+  requests-per-minute: 120
+
+# Resilience4j - Adjusted for production
+resilience4j:
+  circuitbreaker:
+    instances:
+      openMeteoService:
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 10
+        waitDurationInOpenState: 30s
