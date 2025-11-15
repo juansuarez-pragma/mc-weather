@@ -1,38 +1,38 @@
-# Architecture Documentation
+# Documentación de Arquitectura
 
-## Overview
+## Descripción General
 
-This document describes the architectural decisions, patterns, and design principles used in the Weather API Service.
+Este documento describe las decisiones arquitectónicas, patrones y principios de diseño utilizados en el Servicio API del Clima.
 
-## Table of Contents
+## Tabla de Contenidos
 
-1. [Architectural Style](#architectural-style)
-2. [Layer Description](#layer-description)
-3. [Design Patterns](#design-patterns)
-4. [Data Flow](#data-flow)
-5. [Resilience Patterns](#resilience-patterns)
-6. [Caching Strategy](#caching-strategy)
-7. [Security Considerations](#security-considerations)
-8. [Performance Optimizations](#performance-optimizations)
-9. [ADRs (Architecture Decision Records)](#architecture-decision-records)
+1. [Estilo Arquitectónico](#estilo-arquitectónico)
+2. [Descripción de Capas](#descripción-de-capas)
+3. [Patrones de Diseño](#patrones-de-diseño)
+4. [Flujo de Datos](#flujo-de-datos)
+5. [Patrones de Resiliencia](#patrones-de-resiliencia)
+6. [Estrategia de Caché](#estrategia-de-caché)
+7. [Consideraciones de Seguridad](#consideraciones-de-seguridad)
+8. [Optimizaciones de Rendimiento](#optimizaciones-de-rendimiento)
+9. [ADRs (Registros de Decisiones Arquitectónicas)](#registros-de-decisiones-arquitectónicas)
 
 ---
 
-## Architectural Style
+## Estilo Arquitectónico
 
-### Hexagonal Architecture (Ports & Adapters)
+### Arquitectura Hexagonal (Puertos y Adaptadores)
 
-The system follows **Hexagonal Architecture** principles to achieve:
+El sistema sigue los principios de **Arquitectura Hexagonal** para lograr:
 
-- **Separation of Concerns**: Business logic isolated from external dependencies
-- **Testability**: Easy to test with mocked dependencies
-- **Flexibility**: Easy to swap implementations (e.g., different API clients)
-- **Maintainability**: Clear boundaries between layers
+- **Separación de Responsabilidades**: Lógica de negocio aislada de dependencias externas
+- **Testabilidad**: Fácil de probar con dependencias mockeadas
+- **Flexibilidad**: Fácil de intercambiar implementaciones (ej: diferentes clientes de API)
+- **Mantenibilidad**: Límites claros entre capas
 
 ```
 ┌──────────────────────────────────────────────┐
-│         Infrastructure Layer                 │
-│  (Frameworks, Databases, External APIs)      │
+│         Capa de Infraestructura              │
+│  (Frameworks, Bases de Datos, APIs Externas) │
 │                                              │
 │  ┌────────────┐         ┌────────────┐      │
 │  │ REST       │         │ Feign      │      │
@@ -41,25 +41,25 @@ The system follows **Hexagonal Architecture** principles to achieve:
 └────────┼───────────────────────┼────────────┘
          │                       │
          │    ┌─────────────┐    │
-         ├────│   Ports     │────┤
+         ├────│   Puertos   │────┤
          │    │ (Interfaces)│    │
          │    └─────────────┘    │
          │                       │
 ┌────────┼───────────────────────┼────────────┐
 │        ▼                       ▼            │
-│         Application Layer                   │
-│  (Use Cases, Business Rules)                │
+│         Capa de Aplicación                  │
+│  (Casos de Uso, Reglas de Negocio)          │
 │                                              │
 │  ┌────────────────────────────────┐         │
 │  │   WeatherService               │         │
-│  │   (Business Logic)             │         │
+│  │   (Lógica de Negocio)          │         │
 │  └────────────────────────────────┘         │
 └──────────────────────────────────────────────┘
                     │
 ┌───────────────────┼──────────────────────────┐
 │                   ▼                          │
-│         Domain Layer                         │
-│  (Core Business Models)                      │
+│         Capa de Dominio                      │
+│  (Modelos de Negocio Core)                   │
 │                                              │
 │  ┌────────────┐  ┌────────────┐             │
 │  │  Weather   │  │  Location  │             │
@@ -71,24 +71,24 @@ The system follows **Hexagonal Architecture** principles to achieve:
 
 ---
 
-## Layer Description
+## Descripción de Capas
 
-### 1. Domain Layer (`com.weather.api.domain`)
+### 1. Capa de Dominio (`com.weather.api.domain`)
 
-**Purpose**: Core business logic and rules
+**Propósito**: Lógica de negocio central y reglas
 
-**Components**:
+**Componentes**:
 - **Models**: `Weather`, `Location`, `GeocodingResult`
 - **Exceptions**: `InvalidCoordinatesException`, `CityNotFoundException`, `ExternalApiException`
-- **Ports**: `WeatherUseCase` (input), `WeatherRepositoryPort` (output)
+- **Ports**: `WeatherUseCase` (entrada), `WeatherRepositoryPort` (salida)
 
-**Principles**:
-- No framework dependencies
-- Pure Java objects
-- Immutable where possible (using Lombok `@Value`)
-- Self-validating models
+**Principios**:
+- Sin dependencias de frameworks
+- Objetos Java puros
+- Inmutables cuando sea posible (usando `@Value` de Lombok)
+- Modelos auto-validables
 
-**Example**:
+**Ejemplo**:
 ```java
 @Value
 @Builder
@@ -103,22 +103,22 @@ public class Location {
 }
 ```
 
-### 2. Application Layer (`com.weather.api.application`)
+### 2. Capa de Aplicación (`com.weather.api.application`)
 
-**Purpose**: Orchestrate business logic and coordinate between layers
+**Propósito**: Orquestar la lógica de negocio y coordinar entre capas
 
-**Components**:
-- **Services**: `WeatherService` implements `WeatherUseCase`
-- **DTOs**: Request/Response objects for API
-- **Mappers**: Transform between domain models and DTOs
+**Componentes**:
+- **Services**: `WeatherService` implementa `WeatherUseCase`
+- **DTOs**: Objetos Request/Response para la API
+- **Mappers**: Transforman entre modelos de dominio y DTOs
 
-**Responsibilities**:
-- Input validation
-- Caching annotations
-- MDC logging context
-- Error handling delegation
+**Responsabilidades**:
+- Validación de entrada
+- Anotaciones de caché
+- Contexto de logging MDC
+- Delegación de manejo de errores
 
-**Example**:
+**Ejemplo**:
 ```java
 @Service
 @RequiredArgsConstructor
@@ -132,84 +132,84 @@ public class WeatherService implements WeatherUseCase {
 }
 ```
 
-### 3. Infrastructure Layer (`com.weather.api.infrastructure`)
+### 3. Capa de Infraestructura (`com.weather.api.infrastructure`)
 
-**Purpose**: Technical implementation details
+**Propósito**: Detalles de implementación técnica
 
-**Components**:
-- **Adapters**: REST controllers, Feign clients
-- **Configuration**: Cache, CORS, Swagger, Resilience
-- **Monitoring**: Health indicators, metrics
+**Componentes**:
+- **Adapters**: Controladores REST, clientes Feign
+- **Configuration**: Caché, CORS, Swagger, Resiliencia
+- **Monitoring**: Indicadores de salud, métricas
 
-**Characteristics**:
-- Framework-dependent
-- External integrations
-- Technical cross-cutting concerns
+**Características**:
+- Dependiente de frameworks
+- Integraciones externas
+- Preocupaciones técnicas transversales
 
 ---
 
-## Design Patterns
+## Patrones de Diseño
 
-### 1. **Repository Pattern**
+### 1. **Patrón Repository**
 
-Even though we're calling an HTTP API, we treat it as a repository:
+Aunque estamos llamando una API HTTP, la tratamos como un repositorio:
 
 ```java
-// Port (interface in domain)
+// Puerto (interface en el dominio)
 public interface WeatherRepositoryPort {
     Weather fetchWeatherForecast(Double latitude, Double longitude, String timezone);
 }
 
-// Adapter (implementation in infrastructure)
+// Adaptador (implementación en infraestructura)
 @Component
 public class OpenMeteoClientImpl implements WeatherRepositoryPort {
-    // Implementation using Feign
+    // Implementación usando Feign
 }
 ```
 
-**Benefits**:
-- Easy to test with mocks
-- Can swap implementations (e.g., different weather APIs)
-- Domain layer doesn't know about HTTP
+**Beneficios**:
+- Fácil de probar con mocks
+- Se pueden intercambiar implementaciones (ej: diferentes APIs del clima)
+- La capa de dominio no conoce HTTP
 
-### 2. **Mapper Pattern**
+### 2. **Patrón Mapper**
 
-Separate DTOs from domain models:
+Separar DTOs de modelos de dominio:
 
 ```java
 @Component
 public class WeatherMapper {
     public WeatherForecastResponse toResponse(Weather weather) {
-        // Mapping logic
+        // Lógica de mapeo
     }
 }
 ```
 
-**Benefits**:
-- Domain models stay clean
-- API contract separate from business logic
-- Versioning flexibility
+**Beneficios**:
+- Los modelos de dominio se mantienen limpios
+- Contrato de API separado de la lógica de negocio
+- Flexibilidad para versionado
 
-### 3. **Circuit Breaker Pattern**
+### 3. **Patrón Circuit Breaker**
 
-Using Resilience4j:
+Usando Resilience4j:
 
 ```java
 @CircuitBreaker(name = "openMeteoService", fallbackMethod = "fetchWeatherForecastFallback")
 @Retry(name = "openMeteoService")
 public Weather fetchWeatherForecast(...) {
-    // Call external API
+    // Llamar a la API externa
 }
 ```
 
-**States**:
-- **CLOSED**: Normal operation
-- **OPEN**: Too many failures, reject requests immediately
-- **HALF_OPEN**: Test if service recovered
+**Estados**:
+- **CLOSED**: Operación normal
+- **OPEN**: Demasiadas fallas, rechazar peticiones inmediatamente
+- **HALF_OPEN**: Probar si el servicio se recuperó
 
-### 4. **Retry Pattern**
+### 4. **Patrón Retry**
 
-Exponential backoff for transient failures:
+Backoff exponencial para fallas transitorias:
 
 ```yaml
 resilience4j:
@@ -221,16 +221,16 @@ resilience4j:
         exponentialBackoffMultiplier: 2
 ```
 
-**Retry Sequence**:
-1. Initial call fails
-2. Wait 1s, retry
-3. Wait 2s, retry
-4. Wait 4s, retry
-5. Give up, throw exception
+**Secuencia de Reintentos**:
+1. La llamada inicial falla
+2. Esperar 1s, reintentar
+3. Esperar 2s, reintentar
+4. Esperar 4s, reintentar
+5. Rendirse, lanzar excepción
 
-### 5. **Builder Pattern**
+### 5. **Patrón Builder**
 
-For constructing complex objects:
+Para construir objetos complejos:
 
 ```java
 Weather weather = Weather.builder()
@@ -243,164 +243,164 @@ Weather weather = Weather.builder()
 
 ---
 
-## Data Flow
+## Flujo de Datos
 
-### Request Flow (Weather Forecast)
+### Flujo de Peticiones (Pronóstico del Clima)
 
 ```
-iOS App
+App iOS
   │
   │ HTTP GET /api/v1/weather/forecast?latitude=40.7128&longitude=-74.0060
   │
   ▼
 ┌─────────────────────────────────────────┐
 │ 1. WeatherController                    │
-│    - Validate request params            │
-│    - Rate limiting check                │
+│    - Validar parámetros de petición     │
+│    - Verificar rate limiting            │
 └─────────────┬───────────────────────────┘
               │
               ▼
 ┌─────────────────────────────────────────┐
 │ 2. WeatherService                       │
-│    - Check cache (Caffeine)             │
-│    - If cached: return immediately      │
-│    - If not: continue to repository     │
+│    - Verificar caché (Caffeine)         │
+│    - Si está en caché: retornar inmediato│
+│    - Si no: continuar al repositorio    │
 └─────────────┬───────────────────────────┘
               │
               ▼
 ┌─────────────────────────────────────────┐
 │ 3. OpenMeteoClientImpl                  │
-│    - Circuit breaker check              │
-│    - Call Open-Meteo API via Feign      │
-│    - Retry if transient failure         │
+│    - Verificar circuit breaker          │
+│    - Llamar a Open-Meteo API via Feign  │
+│    - Reintentar si hay falla transitoria│
 └─────────────┬───────────────────────────┘
               │
               ▼
 ┌─────────────────────────────────────────┐
 │ 4. Open-Meteo API                       │
-│    - External weather service           │
+│    - Servicio del clima externo         │
 └─────────────┬───────────────────────────┘
               │
-              ▼ Response
+              ▼ Respuesta
 ┌─────────────────────────────────────────┐
-│ 5. Map to Domain Model                  │
+│ 5. Mapear a Modelo de Dominio           │
 │    - OpenMeteoWeatherResponse → Weather │
 └─────────────┬───────────────────────────┘
               │
               ▼
 ┌─────────────────────────────────────────┐
-│ 6. Store in Cache                       │
-│    - TTL: 5 minutes                     │
+│ 6. Almacenar en Caché                   │
+│    - TTL: 5 minutos                     │
 └─────────────┬───────────────────────────┘
               │
               ▼
 ┌─────────────────────────────────────────┐
-│ 7. Map to DTO                           │
+│ 7. Mapear a DTO                         │
 │    - Weather → WeatherForecastResponse  │
 └─────────────┬───────────────────────────┘
               │
               ▼
 ┌─────────────────────────────────────────┐
-│ 8. Return JSON Response                 │
+│ 8. Retornar Respuesta JSON              │
 └─────────────────────────────────────────┘
 ```
 
 ---
 
-## Resilience Patterns
+## Patrones de Resiliencia
 
-### Circuit Breaker Configuration
+### Configuración del Circuit Breaker
 
 ```yaml
 resilience4j:
   circuitbreaker:
     instances:
       openMeteoService:
-        slidingWindowSize: 10           # Track last 10 calls
-        minimumNumberOfCalls: 5         # Need 5 calls to calculate failure rate
-        failureRateThreshold: 50        # Open if 50% fail
-        waitDurationInOpenState: 10s    # Stay open for 10s
-        permittedNumberOfCallsInHalfOpenState: 3  # Allow 3 test calls
+        slidingWindowSize: 10           # Rastrear últimas 10 llamadas
+        minimumNumberOfCalls: 5         # Necesita 5 llamadas para calcular tasa de fallo
+        failureRateThreshold: 50        # Abrir si 50% fallan
+        waitDurationInOpenState: 10s    # Permanecer abierto por 10s
+        permittedNumberOfCallsInHalfOpenState: 3  # Permitir 3 llamadas de prueba
 ```
 
-**Decision Matrix**:
+**Matriz de Decisiones**:
 
-| Scenario | Action | Reason |
+| Escenario | Acción | Razón |
 |----------|--------|--------|
-| 5/10 calls fail | Open circuit | Failure rate = 50% |
-| Circuit open | Reject immediately | Prevent cascading failures |
-| After 10s | Enter half-open | Test if service recovered |
-| 3/3 test calls succeed | Close circuit | Service recovered |
-| Any test call fails | Re-open circuit | Not recovered yet |
+| 5/10 llamadas fallan | Abrir circuito | Tasa de fallo = 50% |
+| Circuito abierto | Rechazar inmediatamente | Prevenir fallas en cascada |
+| Después de 10s | Entrar a half-open | Probar si el servicio se recuperó |
+| 3/3 llamadas de prueba exitosas | Cerrar circuito | Servicio recuperado |
+| Cualquier llamada de prueba falla | Re-abrir circuito | No recuperado aún |
 
-### Fallback Strategy
+### Estrategia de Fallback
 
-When circuit is open or all retries exhausted:
+Cuando el circuito está abierto o todos los reintentos se agotaron:
 
 ```java
 private Weather fetchWeatherForecastFallback(Exception e) {
     throw new ExternalApiException(
-        "Weather service is currently unavailable. Please try again later.",
+        "El servicio del clima no está disponible actualmente. Por favor, intenta más tarde.",
         e
     );
 }
 ```
 
-**Alternative Strategies** (not implemented, for future):
-- Return cached data even if expired
-- Return default weather data
-- Call backup weather API
+**Estrategias Alternativas** (no implementadas, para el futuro):
+- Retornar datos en caché incluso si están expirados
+- Retornar datos del clima por defecto
+- Llamar a una API de respaldo del clima
 
 ---
 
-## Caching Strategy
+## Estrategia de Caché
 
-### Configuration
+### Configuración
 
 ```java
 Caffeine.newBuilder()
-    .maximumSize(1000)              // Max 1000 entries
-    .expireAfterWrite(5, MINUTES)   // Expire after 5 minutes
-    .recordStats()                   // Enable metrics
+    .maximumSize(1000)              // Máximo 1000 entradas
+    .expireAfterWrite(5, MINUTES)   // Expirar después de 5 minutos
+    .recordStats()                   // Habilitar métricas
     .build();
 ```
 
-### Cache Keys
+### Claves de Caché
 
-- **Weather Forecast**: `{latitude}_{longitude}`
-- **City Search**: `{cityName}_{count}_{language}`
+- **Pronóstico del Clima**: `{latitude}_{longitude}`
+- **Búsqueda de Ciudades**: `{cityName}_{count}_{language}`
 
-### Why 5 Minutes?
+### ¿Por Qué 5 Minutos?
 
-| Factor | Consideration |
+| Factor | Consideración |
 |--------|---------------|
-| **Data Freshness** | Weather doesn't change every second |
-| **API Cost** | Reduce calls to external API |
-| **User Experience** | Fast response for repeated requests |
-| **Memory** | 1000 entries ≈ 10MB RAM |
+| **Frescura de Datos** | El clima no cambia cada segundo |
+| **Costo de API** | Reducir llamadas a API externa |
+| **Experiencia de Usuario** | Respuesta rápida para peticiones repetidas |
+| **Memoria** | 1000 entradas ≈ 10MB RAM |
 
-### Cache Invalidation
+### Invalidación de Caché
 
-- **Time-based**: Automatic after 5 minutes (expireAfterWrite)
-- **Size-based**: LRU eviction when max size reached
-- **Manual**: Not implemented (could add endpoint to clear cache)
+- **Basada en tiempo**: Automática después de 5 minutos (expireAfterWrite)
+- **Basada en tamaño**: Evicción LRU cuando se alcanza el tamaño máximo
+- **Manual**: No implementada (se podría añadir endpoint para limpiar caché)
 
 ---
 
-## Security Considerations
+## Consideraciones de Seguridad
 
-### 1. Input Validation
+### 1. Validación de Entrada
 
-**Multiple layers**:
+**Múltiples capas**:
 
 ```java
-// 1. Bean Validation (Controller)
+// 1. Bean Validation (Controlador)
 @NotNull
 @DecimalMin("-90.0")
 @DecimalMax("90.0")
 Double latitude;
 
-// 2. Business Validation (Service)
+// 2. Validación de Negocio (Servicio)
 private void validateCoordinates(Double latitude, Double longitude) {
     Location location = Location.builder()
         .latitude(latitude)
@@ -415,45 +415,45 @@ private void validateCoordinates(Double latitude, Double longitude) {
 
 ### 2. Rate Limiting
 
-Prevent abuse:
+Prevenir abuso:
 
 ```yaml
 resilience4j:
   ratelimiter:
     instances:
       openMeteoService:
-        limitForPeriod: 60      # 60 requests
-        limitRefreshPeriod: 60s  # per minute
+        limitForPeriod: 60      # 60 peticiones
+        limitRefreshPeriod: 60s  # por minuto
 ```
 
-Returns `429 Too Many Requests` when exceeded.
+Retorna `429 Too Many Requests` cuando se excede.
 
-### 3. CORS Configuration
+### 3. Configuración CORS
 
 ```yaml
 cors:
-  allowed-origins: "*"           # Change to specific domain in production
+  allowed-origins: "*"           # Cambiar a dominio específico en producción
   allowed-methods: GET,OPTIONS
   allowed-headers: "*"
 ```
 
-**Production**: Should restrict `allowed-origins` to iOS app domain.
+**Producción**: Debería restringir `allowed-origins` al dominio de la app iOS.
 
-### 4. Error Messages
+### 4. Mensajes de Error
 
-Never expose:
-- Stack traces (in production)
-- Internal implementation details
-- Database/API credentials
+Nunca exponer:
+- Stack traces (en producción)
+- Detalles de implementación interna
+- Credenciales de base de datos/API
 
-**Safe error response**:
+**Respuesta de error segura**:
 ```json
 {
-  "message": "Weather service is temporarily unavailable"
+  "message": "El servicio del clima está temporalmente no disponible"
 }
 ```
 
-Instead of:
+En lugar de:
 ```json
 {
   "message": "Connection timeout to api.open-meteo.com:443"
@@ -462,18 +462,18 @@ Instead of:
 
 ---
 
-## Performance Optimizations
+## Optimizaciones de Rendimiento
 
-### 1. Caching
+### 1. Caché
 
-**Impact**:
-- Cache hit: ~1ms response time
-- Cache miss: ~200ms response time
-- Hit ratio target: >70%
+**Impacto**:
+- Acierto de caché: ~1ms tiempo de respuesta
+- Fallo de caché: ~200ms tiempo de respuesta
+- Objetivo de tasa de acierto: >70%
 
 ### 2. Connection Pooling
 
-Feign uses built-in connection pooling:
+Feign usa connection pooling integrado:
 
 ```yaml
 feign:
@@ -486,11 +486,11 @@ feign:
 
 ### 3. Multi-stage Docker Build
 
-Reduces image size:
-- Builder stage: ~600MB
-- Runtime stage: ~200MB
+Reduce el tamaño de la imagen:
+- Etapa de construcción: ~600MB
+- Etapa de ejecución: ~200MB
 
-### 4. JVM Tuning
+### 4. Ajuste de JVM
 
 ```dockerfile
 ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseContainerSupport"
@@ -498,126 +498,126 @@ ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseContainerSupport"
 
 ---
 
-## Architecture Decision Records
+## Registros de Decisiones Arquitectónicas
 
-### ADR-001: Why Hexagonal Architecture?
+### ADR-001: ¿Por Qué Arquitectura Hexagonal?
 
-**Context**: Need to build maintainable, testable backend service.
+**Contexto**: Necesidad de construir un servicio backend mantenible y testeable.
 
-**Decision**: Use Hexagonal Architecture (Ports & Adapters).
+**Decisión**: Usar Arquitectura Hexagonal (Puertos y Adaptadores).
 
-**Consequences**:
-- ✅ Easy to test with mocked dependencies
-- ✅ Can swap weather API providers
-- ✅ Clear separation of business logic
-- ❌ More boilerplate code (interfaces, adapters)
-- ❌ Steeper learning curve for new developers
+**Consecuencias**:
+- ✅ Fácil de probar con dependencias mockeadas
+- ✅ Se pueden intercambiar proveedores de API del clima
+- ✅ Separación clara de la lógica de negocio
+- ❌ Más código boilerplate (interfaces, adaptadores)
+- ❌ Curva de aprendizaje más pronunciada para nuevos desarrolladores
 
-**Status**: Accepted
-
----
-
-### ADR-002: Why Caffeine over Redis?
-
-**Context**: Need caching for weather data.
-
-**Options**:
-1. Caffeine (in-memory)
-2. Redis (distributed)
-
-**Decision**: Use Caffeine for initial version.
-
-**Rationale**:
-- Weather data is not critical (can refetch)
-- Single instance deployment (no need for distributed cache)
-- Simpler setup (no external dependencies)
-- Lower latency (~1ms vs ~5ms)
-
-**Future**: If we scale horizontally, migrate to Redis.
-
-**Status**: Accepted
+**Estado**: Aceptado
 
 ---
 
-### ADR-003: Why OpenFeign over RestTemplate?
+### ADR-002: ¿Por Qué Caffeine sobre Redis?
 
-**Context**: Need HTTP client for external API calls.
+**Contexto**: Necesidad de caché para datos del clima.
 
-**Decision**: Use Spring Cloud OpenFeign.
+**Opciones**:
+1. Caffeine (en memoria)
+2. Redis (distribuido)
 
-**Rationale**:
-- Declarative syntax (cleaner code)
-- Better integration with Resilience4j
-- Automatic serialization/deserialization
-- Industry standard for microservices
+**Decisión**: Usar Caffeine para la versión inicial.
 
-**Status**: Accepted
+**Razonamiento**:
+- Los datos del clima no son críticos (se pueden volver a obtener)
+- Despliegue de una sola instancia (no se necesita caché distribuido)
+- Configuración más simple (sin dependencias externas)
+- Menor latencia (~1ms vs ~5ms)
 
----
+**Futuro**: Si escalamos horizontalmente, migrar a Redis.
 
-### ADR-004: Why Not Store User Data?
-
-**Context**: Could cache user search history in database.
-
-**Decision**: Do NOT store user data backend-side.
-
-**Rationale**:
-- iOS app already handles local history (UserDefaults)
-- Avoid GDPR/privacy concerns
-- Simpler backend (stateless)
-- Reduce infrastructure cost (no database needed)
-
-**Status**: Accepted
+**Estado**: Aceptado
 
 ---
 
-## Future Enhancements
+### ADR-003: ¿Por Qué OpenFeign sobre RestTemplate?
 
-### 1. Database Integration
+**Contexto**: Necesidad de cliente HTTP para llamadas a API externa.
 
-If we decide to store user preferences:
-- PostgreSQL for relational data
-- Redis for distributed caching
-- Flyway for migrations
+**Decisión**: Usar Spring Cloud OpenFeign.
 
-### 2. Authentication
+**Razonamiento**:
+- Sintaxis declarativa (código más limpio)
+- Mejor integración con Resilience4j
+- Serialización/deserialización automática
+- Estándar de la industria para microservicios
 
-Add JWT-based authentication:
+**Estado**: Aceptado
+
+---
+
+### ADR-004: ¿Por Qué No Almacenar Datos de Usuario?
+
+**Contexto**: Se podría cachear el historial de búsqueda de usuario en base de datos.
+
+**Decisión**: NO almacenar datos de usuario del lado del backend.
+
+**Razonamiento**:
+- La app iOS ya maneja el historial local (UserDefaults)
+- Evitar preocupaciones de GDPR/privacidad
+- Backend más simple (stateless)
+- Reducir costo de infraestructura (no se necesita base de datos)
+
+**Estado**: Aceptado
+
+---
+
+## Mejoras Futuras
+
+### 1. Integración de Base de Datos
+
+Si decidimos almacenar preferencias de usuario:
+- PostgreSQL para datos relacionales
+- Redis para caché distribuido
+- Flyway para migraciones
+
+### 2. Autenticación
+
+Añadir autenticación basada en JWT:
 ```java
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    // JWT filter configuration
+    // Configuración de filtro JWT
 }
 ```
 
-### 3. Advanced Monitoring
+### 3. Monitoreo Avanzado
 
-- Distributed tracing (Zipkin/Jaeger)
-- Log aggregation (ELK stack)
-- Custom Grafana dashboards
+- Trazado distribuido (Zipkin/Jaeger)
+- Agregación de logs (stack ELK)
+- Dashboards personalizados de Grafana
 
-### 4. Multi-Region Deployment
+### 4. Despliegue Multi-Región
 
-- Active-active architecture
-- Geographic load balancing
-- Redis for shared cache
-
----
-
-## Conclusion
-
-This architecture provides:
-- ✅ **Maintainability**: Clear separation of concerns
-- ✅ **Testability**: High test coverage possible
-- ✅ **Resilience**: Circuit breaker + retry + caching
-- ✅ **Performance**: Fast responses with caching
-- ✅ **Scalability**: Stateless, can scale horizontally
-- ✅ **Observability**: Comprehensive monitoring
-
-The design follows industry best practices for a production-ready backend service.
+- Arquitectura activo-activo
+- Balanceo de carga geográfico
+- Redis para caché compartido
 
 ---
 
-**Last Updated**: 2025-11-15
-**Author**: Weather API Team
+## Conclusión
+
+Esta arquitectura proporciona:
+- ✅ **Mantenibilidad**: Separación clara de responsabilidades
+- ✅ **Testabilidad**: Alta cobertura de tests posible
+- ✅ **Resiliencia**: Circuit breaker + retry + caché
+- ✅ **Rendimiento**: Respuestas rápidas con caché
+- ✅ **Escalabilidad**: Stateless, puede escalar horizontalmente
+- ✅ **Observabilidad**: Monitoreo completo
+
+El diseño sigue las mejores prácticas de la industria para un servicio backend listo para producción.
+
+---
+
+**Última Actualización**: 2025-11-15
+**Autor**: Weather API Team
