@@ -1,44 +1,44 @@
-# Weather API Service
+# Servicio API del Clima
 
-Backend service for iOS Weather App - A robust BFF (Backend For Frontend) proxying requests to Open-Meteo API with enhanced features like caching, circuit breaking, and comprehensive monitoring.
+Servicio backend para la aplicación iOS del clima - Un robusto BFF (Backend For Frontend) que actúa como proxy para las peticiones a la API de Open-Meteo con características mejoradas como caché, circuit breaking y monitoreo completo.
 
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-## 📋 Table of Contents
+## 📋 Tabla de Contenidos
 
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [API Documentation](#-api-documentation)
-- [Configuration](#-configuration)
+- [Características](#-características)
+- [Arquitectura](#-arquitectura)
+- [Stack Tecnológico](#-stack-tecnológico)
+- [Requisitos Previos](#-requisitos-previos)
+- [Primeros Pasos](#-primeros-pasos)
+- [Documentación de la API](#-documentación-de-la-api)
+- [Configuración](#-configuración)
 - [Testing](#-testing)
 - [Docker](#-docker)
-- [Monitoring](#-monitoring)
-- [Project Structure](#-project-structure)
+- [Monitoreo](#-monitoreo)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
 
-## ✨ Features
+## ✨ Características
 
-- **🔄 Intelligent Caching**: Caffeine-based caching with 5-minute TTL to reduce external API calls
-- **🛡️ Circuit Breaker**: Resilience4j circuit breaker pattern for fault tolerance
-- **🔁 Retry Logic**: Automatic retry with exponential backoff for transient failures
-- **⏱️ Rate Limiting**: Protection against API abuse (60 requests/minute)
-- **📊 Monitoring**: Prometheus metrics and health checks via Spring Actuator
-- **📝 API Documentation**: Interactive Swagger UI (OpenAPI 3.0)
-- **🏗️ Clean Architecture**: Hexagonal architecture with clear separation of concerns
-- **✅ High Test Coverage**: >80% code coverage with unit and integration tests
-- **🐳 Containerized**: Docker and Docker Compose ready
+- **🔄 Caché Inteligente**: Caché basado en Caffeine con TTL de 5 minutos para reducir llamadas a APIs externas
+- **🛡️ Circuit Breaker**: Patrón circuit breaker con Resilience4j para tolerancia a fallos
+- **🔁 Lógica de Reintentos**: Reintentos automáticos con backoff exponencial para fallos transitorios
+- **⏱️ Rate Limiting**: Protección contra abuso de la API (60 peticiones/minuto)
+- **📊 Monitoreo**: Métricas de Prometheus y health checks vía Spring Actuator
+- **📝 Documentación de API**: Swagger UI interactivo (OpenAPI 3.0)
+- **🏗️ Arquitectura Limpia**: Arquitectura hexagonal con clara separación de responsabilidades
+- **✅ Alta Cobertura de Tests**: >80% de cobertura de código con tests unitarios e integración
+- **🐳 Containerizado**: Listo para Docker y Docker Compose
 
-## 🏗️ Architecture
+## 🏗️ Arquitectura
 
-This project follows **Hexagonal Architecture** (Ports & Adapters) principles:
+Este proyecto sigue los principios de **Arquitectura Hexagonal** (Puertos y Adaptadores):
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│              Infrastructure Layer                    │
+│              Capa de Infraestructura                 │
 │  ┌──────────────┐  ┌──────────────┐  ┌───────────┐ │
 │  │   REST API   │  │ Feign Client │  │   Config  │ │
 │  └──────┬───────┘  └──────┬───────┘  └───────────┘ │
@@ -46,93 +46,93 @@ This project follows **Hexagonal Architecture** (Ports & Adapters) principles:
           │                  │
 ┌─────────┼──────────────────┼──────────────────────────┐
 │         ▼                  ▼                           │
-│              Application Layer                        │
+│              Capa de Aplicación                       │
 │  ┌──────────────┐  ┌──────────────┐  ┌───────────┐  │
-│  │   Services   │  │    Mappers   │  │    DTOs   │  │
+│  │   Servicios  │  │    Mappers   │  │    DTOs   │  │
 │  └──────┬───────┘  └──────────────┘  └───────────┘  │
 └─────────┼──────────────────────────────────────────────┘
           │
 ┌─────────┼──────────────────────────────────────────────┐
 │         ▼                                               │
-│              Domain Layer (Business Logic)             │
+│              Capa de Dominio (Lógica de Negocio)       │
 │  ┌──────────────┐  ┌──────────────┐  ┌───────────┐   │
 │  │    Models    │  │  Exceptions  │  │   Ports   │   │
 │  └──────────────┘  └──────────────┘  └───────────┘   │
 └─────────────────────────────────────────────────────────┘
 ```
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design decisions.
+Ver [ARCHITECTURE.md](ARCHITECTURE.md) para decisiones de diseño detalladas.
 
-## 🛠️ Tech Stack
+## 🛠️ Stack Tecnológico
 
-| Component | Technology | Purpose |
+| Componente | Tecnología | Propósito |
 |-----------|-----------|---------|
-| **Language** | Java 17 | Modern Java with records, pattern matching |
-| **Framework** | Spring Boot 3.2.0 | Enterprise-grade application framework |
-| **HTTP Client** | OpenFeign | Declarative REST client |
-| **Resilience** | Resilience4j | Circuit breaker, retry, rate limiting |
-| **Caching** | Caffeine | High-performance in-memory cache |
-| **Validation** | Jakarta Validation | Bean validation |
-| **Documentation** | SpringDoc OpenAPI | Interactive API docs |
-| **Monitoring** | Micrometer + Actuator | Metrics and health checks |
-| **Testing** | JUnit 5 + Mockito + WireMock | Comprehensive testing |
-| **Build** | Maven 3.9+ | Dependency management |
-| **Containerization** | Docker + Docker Compose | Deployment |
+| **Lenguaje** | Java 17 | Java moderno con records, pattern matching |
+| **Framework** | Spring Boot 3.2.0 | Framework de aplicaciones de nivel empresarial |
+| **Cliente HTTP** | OpenFeign | Cliente REST declarativo |
+| **Resiliencia** | Resilience4j | Circuit breaker, retry, rate limiting |
+| **Caché** | Caffeine | Caché en memoria de alto rendimiento |
+| **Validación** | Jakarta Validation | Validación de beans |
+| **Documentación** | SpringDoc OpenAPI | Documentación interactiva de API |
+| **Monitoreo** | Micrometer + Actuator | Métricas y health checks |
+| **Testing** | JUnit 5 + Mockito + WireMock | Testing completo |
+| **Build** | Maven 3.9+ | Gestión de dependencias |
+| **Containerización** | Docker + Docker Compose | Despliegue |
 
-## 📦 Prerequisites
+## 📦 Requisitos Previos
 
-- **Java 17** or higher
-- **Maven 3.9** or higher
-- **Docker** (optional, for containerized deployment)
+- **Java 17** o superior
+- **Maven 3.9** o superior
+- **Docker** (opcional, para despliegue containerizado)
 
-## 🚀 Getting Started
+## 🚀 Primeros Pasos
 
-### 1. Clone the Repository
+### 1. Clonar el Repositorio
 
 ```bash
 git clone git@github.com:juansuarez-pragma/mc-weather.git
 cd mc-weather
 ```
 
-### 2. Build the Project
+### 2. Compilar el Proyecto
 
 ```bash
 mvn clean install
 ```
 
-### 3. Run the Application
+### 3. Ejecutar la Aplicación
 
 ```bash
 mvn spring-boot:run
 ```
 
-The API will be available at `http://localhost:8080`
+La API estará disponible en `http://localhost:8080`
 
-### 4. Access Swagger UI
+### 4. Acceder a Swagger UI
 
-Navigate to: `http://localhost:8080/swagger-ui.html`
+Navegar a: `http://localhost:8080/swagger-ui.html`
 
-## 📚 API Documentation
+## 📚 Documentación de la API
 
 ### Endpoints
 
-#### Get Weather Forecast
+#### Obtener Pronóstico del Clima
 
 ```http
 GET /api/v1/weather/forecast?latitude={lat}&longitude={lon}&timezone={tz}
 ```
 
-**Parameters:**
-- `latitude` (required): Latitude coordinate (-90 to 90)
-- `longitude` (required): Longitude coordinate (-180 to 180)
-- `timezone` (optional): Timezone (default: "auto")
+**Parámetros:**
+- `latitude` (requerido): Coordenada de latitud (-90 a 90)
+- `longitude` (requerido): Coordenada de longitud (-180 a 180)
+- `timezone` (opcional): Zona horaria (por defecto: "auto")
 
-**Example Request:**
+**Ejemplo de Petición:**
 ```bash
 curl "http://localhost:8080/api/v1/weather/forecast?latitude=40.7128&longitude=-74.0060"
 ```
 
-**Example Response:**
+**Ejemplo de Respuesta:**
 ```json
 {
   "latitude": 40.7128,
@@ -148,23 +148,23 @@ curl "http://localhost:8080/api/v1/weather/forecast?latitude=40.7128&longitude=-
 }
 ```
 
-#### Search Cities
+#### Buscar Ciudades
 
 ```http
 GET /api/v1/weather/search?name={cityName}&count={count}&language={lang}
 ```
 
-**Parameters:**
-- `name` (required): City name (minimum 2 characters)
-- `count` (optional): Maximum results (default: 10, max: 20)
-- `language` (optional): Language code (default: "en")
+**Parámetros:**
+- `name` (requerido): Nombre de la ciudad (mínimo 2 caracteres)
+- `count` (opcional): Resultados máximos (por defecto: 10, máx: 20)
+- `language` (opcional): Código de idioma (por defecto: "en")
 
-**Example Request:**
+**Ejemplo de Petición:**
 ```bash
 curl "http://localhost:8080/api/v1/weather/search?name=New%20York&count=5"
 ```
 
-**Example Response:**
+**Ejemplo de Respuesta:**
 ```json
 {
   "results": [
@@ -181,40 +181,40 @@ curl "http://localhost:8080/api/v1/weather/search?name=New%20York&count=5"
 }
 ```
 
-### Error Responses
+### Respuestas de Error
 
-All error responses follow this structure:
+Todas las respuestas de error siguen esta estructura:
 
 ```json
 {
   "timestamp": "2025-11-15T10:30:00",
   "status": 400,
   "error": "Bad Request",
-  "message": "Latitude must be between -90 and 90"
+  "message": "La latitud debe estar entre -90 y 90"
 }
 ```
 
-**Status Codes:**
-- `200` - Success
-- `400` - Bad Request (invalid parameters)
-- `404` - Not Found (city not found)
-- `429` - Too Many Requests (rate limit exceeded)
-- `503` - Service Unavailable (external API down)
+**Códigos de Estado:**
+- `200` - Éxito
+- `400` - Bad Request (parámetros inválidos)
+- `404` - Not Found (ciudad no encontrada)
+- `429` - Too Many Requests (límite de tasa excedido)
+- `503` - Service Unavailable (API externa caída)
 
-## ⚙️ Configuration
+## ⚙️ Configuración
 
-### Application Properties
+### Propiedades de la Aplicación
 
-Key configuration in `application.yml`:
+Configuración clave en `application.yml`:
 
 ```yaml
-# Cache Configuration
+# Configuración de Caché
 spring:
   cache:
     caffeine:
       spec: maximumSize=1000,expireAfterWrite=5m
 
-# Resilience4j Circuit Breaker
+# Circuit Breaker de Resilience4j
 resilience4j:
   circuitbreaker:
     instances:
@@ -228,70 +228,70 @@ rate-limit:
   requests-per-minute: 60
 ```
 
-### Environment Variables
+### Variables de Entorno
 
-| Variable | Description | Default |
+| Variable | Descripción | Por Defecto |
 |----------|-------------|---------|
-| `SPRING_PROFILES_ACTIVE` | Active profile (dev/prod) | `dev` |
-| `SERVER_PORT` | Server port | `8080` |
-| `JAVA_OPTS` | JVM options | `-Xms256m -Xmx512m` |
+| `SPRING_PROFILES_ACTIVE` | Perfil activo (dev/prod) | `dev` |
+| `SERVER_PORT` | Puerto del servidor | `8080` |
+| `JAVA_OPTS` | Opciones de JVM | `-Xms256m -Xmx512m` |
 
 ## 🧪 Testing
 
-### Run All Tests
+### Ejecutar Todos los Tests
 
 ```bash
 mvn test
 ```
 
-### Run Tests with Coverage
+### Ejecutar Tests con Cobertura
 
 ```bash
 mvn clean test jacoco:report
 ```
 
-View coverage report: `target/site/jacoco/index.html`
+Ver reporte de cobertura: `target/site/jacoco/index.html`
 
-### Test Structure
+### Estructura de Tests
 
-- **Unit Tests**: Test individual components in isolation
-- **Integration Tests**: Test full stack with WireMock
-- **Coverage**: >80% line coverage enforced
+- **Tests Unitarios**: Prueban componentes individuales de forma aislada
+- **Tests de Integración**: Prueban el stack completo con WireMock
+- **Cobertura**: >80% de cobertura de líneas forzada
 
 ## 🐳 Docker
 
-### Build Docker Image
+### Construir Imagen Docker
 
 ```bash
 docker build -t weather-api-service:latest .
 ```
 
-### Run with Docker Compose
+### Ejecutar con Docker Compose
 
 ```bash
 docker-compose up -d
 ```
 
-This will start:
-- Weather API Service on port `8080`
+Esto iniciará:
+- Servicio API del Clima en el puerto `8080`
 
-### With Monitoring Stack
+### Con Stack de Monitoreo
 
 ```bash
 docker-compose --profile monitoring up -d
 ```
 
-This adds:
-- Prometheus on port `9090`
-- Grafana on port `3000` (admin/admin)
+Esto añade:
+- Prometheus en el puerto `9090`
+- Grafana en el puerto `3000` (admin/admin)
 
-### Stop Services
+### Detener Servicios
 
 ```bash
 docker-compose down
 ```
 
-## 📊 Monitoring
+## 📊 Monitoreo
 
 ### Health Check
 
@@ -299,7 +299,7 @@ docker-compose down
 curl http://localhost:8080/actuator/health
 ```
 
-Response:
+Respuesta:
 ```json
 {
   "status": "UP",
@@ -314,43 +314,43 @@ Response:
 }
 ```
 
-### Metrics
+### Métricas
 
-Prometheus metrics available at:
+Métricas de Prometheus disponibles en:
 ```
 http://localhost:8080/actuator/prometheus
 ```
 
-Key metrics:
-- `http_server_requests_seconds` - Request latency
-- `resilience4j_circuitbreaker_state` - Circuit breaker state
-- `cache_gets_total` - Cache hit/miss ratio
+Métricas clave:
+- `http_server_requests_seconds` - Latencia de peticiones
+- `resilience4j_circuitbreaker_state` - Estado del circuit breaker
+- `cache_gets_total` - Ratio de aciertos/fallos de caché
 
 ### Logs
 
-Logs are structured with MDC context:
+Los logs están estructurados con contexto MDC:
 
 ```
-2025-11-15 10:30:00 - Getting weather forecast for coordinates: (40.7128, -74.0060)
+2025-11-15 10:30:00 - Obteniendo pronóstico del clima para coordenadas: (40.7128, -74.0060)
 ```
 
-## 📁 Project Structure
+## 📁 Estructura del Proyecto
 
 ```
 src/
 ├── main/
 │   ├── java/com/weather/api/
-│   │   ├── application/           # Application Layer
+│   │   ├── application/           # Capa de Aplicación
 │   │   │   ├── dto/               # Data Transfer Objects
-│   │   │   ├── mapper/            # Object Mappers
-│   │   │   └── service/           # Business Logic
-│   │   ├── domain/                # Domain Layer
-│   │   │   ├── model/             # Domain Models
-│   │   │   ├── exception/         # Domain Exceptions
-│   │   │   └── port/              # Ports (Interfaces)
-│   │   ├── infrastructure/        # Infrastructure Layer
-│   │   │   ├── adapter/           # Adapters (REST, Clients)
-│   │   │   ├── config/            # Configuration
+│   │   │   ├── mapper/            # Mapeadores de Objetos
+│   │   │   └── service/           # Lógica de Negocio
+│   │   ├── domain/                # Capa de Dominio
+│   │   │   ├── model/             # Modelos de Dominio
+│   │   │   ├── exception/         # Excepciones de Dominio
+│   │   │   └── port/              # Puertos (Interfaces)
+│   │   ├── infrastructure/        # Capa de Infraestructura
+│   │   │   ├── adapter/           # Adaptadores (REST, Clientes)
+│   │   │   ├── config/            # Configuración
 │   │   │   └── monitoring/        # Health Checks
 │   │   └── WeatherApiApplication.java
 │   └── resources/
@@ -358,37 +358,37 @@ src/
 │       └── application-prod.yml
 └── test/
     └── java/com/weather/api/
-        ├── application/service/   # Service Tests
-        ├── infrastructure/        # Controller Tests
-        └── integration/           # Integration Tests
+        ├── application/service/   # Tests de Servicios
+        ├── infrastructure/        # Tests de Controladores
+        └── integration/           # Tests de Integración
 ```
 
-## 🤝 Contributing
+## 🤝 Contribuir
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork el repositorio
+2. Crear una rama de feature (`git checkout -b feature/caracteristica-increible`)
+3. Commit de los cambios (`git commit -m 'Añadir característica increíble'`)
+4. Push a la rama (`git push origin feature/caracteristica-increible`)
+5. Abrir un Pull Request
 
-## 📄 License
+## 📄 Licencia
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
-## 👥 Authors
+## 👥 Autores
 
-- **Weather API Team** - *Initial work*
+- **Weather API Team** - *Trabajo inicial*
 
-## 🙏 Acknowledgments
+## 🙏 Agradecimientos
 
-- [Open-Meteo](https://open-meteo.com/) for providing free weather API
-- [Spring Boot](https://spring.io/projects/spring-boot) for the amazing framework
-- [Resilience4j](https://resilience4j.readme.io/) for resilience patterns
+- [Open-Meteo](https://open-meteo.com/) por proporcionar la API del clima gratuita
+- [Spring Boot](https://spring.io/projects/spring-boot) por el increíble framework
+- [Resilience4j](https://resilience4j.readme.io/) por los patrones de resiliencia
 
-## 📞 Support
+## 📞 Soporte
 
-For support, email weather-api@example.com or open an issue on GitHub.
+Para soporte, enviar email a weather-api@example.com o abrir un issue en GitHub.
 
 ---
 
-**Made with ❤️ by Weather API Team**
+**Hecho con ❤️ por Weather API Team**

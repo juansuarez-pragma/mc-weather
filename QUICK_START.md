@@ -1,204 +1,204 @@
-# Quick Start Guide
+# Guía de Inicio Rápido
 
-## 🚀 Get Running in 5 Minutes
+## 🚀 Funcionando en 5 Minutos
 
-### Prerequisites
+### Requisitos Previos
 
-Make sure you have installed:
-- ✅ Java 17 or higher (`java -version`)
+Asegúrate de tener instalado:
+- ✅ Java 17 o superior (`java -version`)
 - ✅ Maven 3.9+ (`mvn -version`)
 
-### Step 1: Build the Project
+### Paso 1: Compilar el Proyecto
 
 ```bash
 mvn clean install
 ```
 
-This will:
-- Download all dependencies
-- Compile the code
-- Run all tests (80%+ coverage)
-- Create executable JAR
+Esto hará:
+- Descargar todas las dependencias
+- Compilar el código
+- Ejecutar todos los tests (cobertura >80%)
+- Crear el JAR ejecutable
 
-### Step 2: Run the Application
+### Paso 2: Ejecutar la Aplicación
 
 ```bash
 mvn spring-boot:run
 ```
 
-Or run the JAR directly:
+O ejecutar el JAR directamente:
 ```bash
 java -jar target/weather-api-service-1.0.0.jar
 ```
 
-### Step 3: Verify It's Running
+### Paso 3: Verificar que Está Funcionando
 
-Open your browser and go to:
+Abre tu navegador y ve a:
 - 🏥 Health Check: http://localhost:8080/actuator/health
-- 📚 API Docs: http://localhost:8080/swagger-ui.html
+- 📚 Documentación de API: http://localhost:8080/swagger-ui.html
 
-### Step 4: Test the API
+### Paso 4: Probar la API
 
-**Get Weather (New York):**
+**Obtener Clima (Nueva York):**
 ```bash
 curl "http://localhost:8080/api/v1/weather/forecast?latitude=40.7128&longitude=-74.0060"
 ```
 
-**Search Cities:**
+**Buscar Ciudades:**
 ```bash
 curl "http://localhost:8080/api/v1/weather/search?name=London"
 ```
 
 ---
 
-## 🐳 Docker Alternative
+## 🐳 Alternativa con Docker
 
-If you prefer Docker:
+Si prefieres Docker:
 
 ```bash
-# Build and run
+# Compilar y ejecutar
 docker-compose up -d
 
-# Check logs
+# Ver logs
 docker-compose logs -f
 
-# Stop
+# Detener
 docker-compose down
 ```
 
 ---
 
-## 📊 Access Monitoring
+## 📊 Acceder al Monitoreo
 
-- **Prometheus Metrics**: http://localhost:8080/actuator/prometheus
+- **Métricas Prometheus**: http://localhost:8080/actuator/prometheus
 - **Health Check**: http://localhost:8080/actuator/health
-- **Application Info**: http://localhost:8080/actuator/info
+- **Información de la Aplicación**: http://localhost:8080/actuator/info
 
 ---
 
-## 🧪 Run Tests
+## 🧪 Ejecutar Tests
 
 ```bash
-# Run all tests
+# Ejecutar todos los tests
 mvn test
 
-# Run with coverage report
+# Ejecutar con reporte de cobertura
 mvn clean test jacoco:report
 
-# View coverage report
+# Ver reporte de cobertura
 open target/site/jacoco/index.html
 ```
 
 ---
 
-## 📦 Import Postman Collection
+## 📦 Importar Colección de Postman
 
-1. Open Postman
-2. Click **Import**
-3. Select `Weather-API.postman_collection.json`
-4. Start testing all endpoints
+1. Abrir Postman
+2. Click en **Import**
+3. Seleccionar `Weather-API.postman_collection.json`
+4. Empezar a probar todos los endpoints
 
 ---
 
-## 🔧 Change Configuration
+## 🔧 Cambiar Configuración
 
-Edit `src/main/resources/application.yml`:
+Editar `src/main/resources/application.yml`:
 
 ```yaml
-# Change server port
+# Cambiar puerto del servidor
 server:
   port: 9090
 
-# Adjust cache TTL
+# Ajustar TTL de caché
 spring:
   cache:
     caffeine:
       spec: maximumSize=5000,expireAfterWrite=10m
 
-# Change rate limit
+# Cambiar límite de tasa
 rate-limit:
   requests-per-minute: 120
 ```
 
 ---
 
-## 📱 Connect iOS App
+## 📱 Conectar con la App iOS
 
-Update your iOS app's base URL to:
+Actualiza la URL base de tu app iOS a:
 
-**Local Development:**
+**Desarrollo Local:**
 ```swift
 let baseURL = "http://localhost:8080"
 ```
 
-**Docker (from iOS Simulator):**
+**Docker (desde el Simulador iOS):**
 ```swift
 let baseURL = "http://host.docker.internal:8080"
 ```
 
-**Production:**
+**Producción:**
 ```swift
-let baseURL = "https://your-domain.com"
+let baseURL = "https://tu-dominio.com"
 ```
 
-Then replace all Open-Meteo API calls with backend calls:
+Luego reemplaza todas las llamadas a la API de Open-Meteo con llamadas al backend:
 
-**Before (Direct API):**
+**Antes (API Directa):**
 ```swift
 let url = "https://api.open-meteo.com/v1/forecast?latitude=\(lat)&longitude=\(lon)..."
 ```
 
-**After (Through Backend):**
+**Después (A través del Backend):**
 ```swift
 let url = "\(baseURL)/api/v1/weather/forecast?latitude=\(lat)&longitude=\(lon)"
 ```
 
 ---
 
-## ⚡ Performance Tips
+## ⚡ Consejos de Rendimiento
 
-1. **Cache is Active**: Second request to same coordinates will be instant
-2. **Circuit Breaker**: Protects against Open-Meteo API failures
-3. **Rate Limiting**: Prevents abuse (60 req/min default)
+1. **El Caché está Activo**: La segunda petición a las mismas coordenadas será instantánea
+2. **Circuit Breaker**: Protege contra fallos de la API de Open-Meteo
+3. **Rate Limiting**: Previene abuso (60 req/min por defecto)
 
 ---
 
-## 🐛 Troubleshooting
+## 🐛 Resolución de Problemas
 
-### Port 8080 Already in Use
+### Puerto 8080 Ya en Uso
 
 ```bash
-# Change port in application.yml
+# Cambiar puerto en application.yml
 server:
   port: 9090
 ```
 
-### Tests Failing
+### Tests Fallando
 
 ```bash
-# Skip tests during build
+# Saltar tests durante la compilación
 mvn clean install -DskipTests
 ```
 
-### Cannot Connect to Open-Meteo API
+### No se Puede Conectar a la API de Open-Meteo
 
-Check circuit breaker status:
+Verificar el estado del circuit breaker:
 ```bash
 curl http://localhost:8080/actuator/health
 ```
 
-If circuit is open, wait 10 seconds and try again.
+Si el circuito está abierto, espera 10 segundos e intenta de nuevo.
 
 ---
 
-## 📚 Next Steps
+## 📚 Próximos Pasos
 
-1. ✅ Read [README.md](README.md) for full documentation
-2. ✅ Review [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions
-3. ✅ Import Postman collection for testing
-4. ✅ Deploy with Docker Compose
-5. ✅ Update iOS app to use backend
+1. ✅ Leer [README.md](README.md) para documentación completa
+2. ✅ Revisar [ARCHITECTURE.md](ARCHITECTURE.md) para decisiones de diseño
+3. ✅ Importar colección de Postman para testing
+4. ✅ Desplegar con Docker Compose
+5. ✅ Actualizar la app iOS para usar el backend
 
 ---
 
-**Happy Coding! 🎉**
+**¡Feliz Codificación! 🎉**
